@@ -1,0 +1,19 @@
+# No training build
+    docker build -t 170899/ml3 .
+
+# Training build
+    docker build -t 170899/ml3 --build-arg train="yes" .
+
+# Running jupyter
+    docker run -p 8888:8888 170899/ml3
+
+# Running bash
+    docker run -it --entrypoint /bin/bash 170899/ml3
+
+# Dockerhub updates
+    docker push 170899/ml3
+    docker pull 170899/ml3
+
+# Clear docker locally
+    docker rmi -f $(docker images -f "dangling=true" -q)
+    docker system prune
