@@ -2,12 +2,10 @@
     docker build -t 170899/ml3 .
 
 # Training build
-    docker build -t 170899/ml3 --build-arg train="yes" .
+    docker build -t 170899/ml3:trained --build-arg train=1 .
 
-# Running jupyter
+# Running
     docker run -p 8888:8888 170899/ml3
-
-# Running bash
     docker run -it --entrypoint /bin/bash 170899/ml3
 
 # Dockerhub updates
@@ -17,3 +15,8 @@
 # Clear docker locally
     docker rmi -f $(docker images -f "dangling=true" -q)
     docker system prune
+
+# get data from image
+    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/kaggle.out.csv kaggle.out.csv
+    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/train_log.txt train_log.txt
+    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/trained_model.pt trained_model.pt

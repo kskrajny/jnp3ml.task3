@@ -2,11 +2,14 @@ import torch.nn as nn
 import torch.optim as optim
 import torch
 import numpy as np
+import pandas as pd
 
 from py_src.prepare_data import prepare_data
 from py_src.net import Net
 
-print("main.py: Let's train !!!")
+print(f'main.py: Lets train !!!\n')
+with open('train_log.txt', 'w') as f:
+    print(f'main.py: Lets train !!!\n', file=f)
 
 train_loader, valid_loader, test_loader = prepare_data()
 
@@ -50,6 +53,29 @@ for epoch in range(epochs):
     \nTraining Loss: {round(train_loss, 6)}\
     \nValidation Loss: {round(valid_loss, 6)}')
 
+    with open('train_log.txt', 'a') as f:
+        print(f'Current Epoch: {epoch}\
+        \nTraining Loss: {round(train_loss, 6)}\
+        \nValidation Loss: {round(valid_loss, 6)}', file=f)
+
     if min_loss > valid_loss:
+        min_loss = valid_loss
         print("New Leader !!!\n")
+        with open('train_log.txt', 'a') as f:
+            print("New Leader !!!\n", file=f)
         torch.save(model.state_dict(), 'trained_model.pt')
+
+# Make predictions
+model.load_state_dict(torch.load('trained_model.pt'))
+
+model.eval()
+output = []
+for batch_idx, (data,) in enumerate(test_loader):
+    output.append([batch_idx, torch.argmax(model(data)).item()])
+
+Submission = pd.DataFrame(output, columns=['Id', 'Class'])
+Submission.to_csv('kaggle.out.csv', index=False)
+
+print(Submission.head())
+with open('train_log.txt', 'a') as f:
+    print(Submission.head(), file=f)

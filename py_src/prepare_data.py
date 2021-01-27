@@ -6,6 +6,11 @@ import torch
 from torch.utils.data.sampler import SubsetRandomSampler
 from torch.utils.data import TensorDataset
 
+def binary(im):
+    x = torch.zeros(1,28,28)
+    y = torch.ones(1,28,28)
+    return torch.where(im > 0.1, x, y)
+
 
 def prepare_data():
     # read data
@@ -16,30 +21,32 @@ def prepare_data():
     # define transforms
     transform_train = transforms.Compose([
         transforms.RandomHorizontalFlip(),
-        transforms.GaussianBlur(1, sigma=(0.03, 0.1)),
         transforms.RandomAffine(degrees=(-8, 8)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))
+        transforms.ToTensor()
     ])
     transform_test = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))
+        transforms.ToTensor()
     ])
 
     # transform datasets
     new_train = []
     new_labels = []
     new_test = []
+
     for (x, y) in zip(train_img, train_lab):
         im = transform_test(Image.fromarray(np.uint8(x)))
+        im = binary(im)
         new_train.append(im)
         new_labels.append(y)
         for j in range(4):
             im = transform_train(Image.fromarray(np.uint8(x)))
             new_train.append(im)
             new_labels.append(y)
+
     for x in t10k:
-        new_test.append(transform_test(Image.fromarray(np.uint8(x))))
+        im = transform_test(Image.fromarray(np.uint8(x)))
+        im = binary(im)
+        new_test.append(im)
 
     # convert to tensors of proper size
     train_tensor = torch.Tensor(len(new_train), 28, 28)
@@ -78,6 +85,6 @@ def prepare_data():
     )
     test_loader = torch.utils.data.DataLoader(
         test_data,
-        batch_size=batch_size
+        batch_size=1
     )
     return train_loader, valid_loader, test_loader

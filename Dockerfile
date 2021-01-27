@@ -6,10 +6,11 @@ RUN mkdir src
 WORKDIR /src
 ADD requirements.txt /src/requirements.txt
 RUN pip3 install -r requirements.txt
+ADD jupyter_require.txt /src/jupyter_require.txt
+RUN pip3 install -r jupyter_require.txt
 ADD . .
-RUN pip3 install jupyter
 ARG train
-RUN chmod u+x /src/scripts/train.sh && /src/scripts/train.sh $train
+RUN if [ $train -eq 1 ]; then python3 -u /src/main.py; fi
 WORKDIR /src/notebooks
 
 CMD ["/src/entrypoint.sh"]
