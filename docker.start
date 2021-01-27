@@ -2,7 +2,7 @@
     docker build -t 170899/ml3 .
 
 # Training build
-    docker build -t 170899/ml3:trained --build-arg train=1 .
+    docker build -t 170899/ml3 --build-arg train=1 .
 
 # Running
     docker run -p 8888:8888 170899/ml3
@@ -17,6 +17,9 @@
     docker system prune
 
 # get data from image
-    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/kaggle.out.csv kaggle.out.csv
-    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/train_log.txt train_log.txt
-    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/trained_model.pt trained_model.pt
+    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/kaggle.out.csv save/kaggle.out.csv
+    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/train_log.txt save/train_log.txt
+    docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/trained_model.pt save/trained_model.pt
+
+# remove container
+    docker rm -f $(docker ps -q --filter ancestor=170899/ml3)

@@ -11,7 +11,7 @@ RUN pip3 install -r jupyter_require.txt
 ADD . .
 ARG train
 RUN if [ $train -eq 1 ]; then python3 -u /src/main.py; fi
-WORKDIR /src
+RUN ls
 
 CMD ["/src/scripts/entrypoint.sh"]
 

@@ -33,7 +33,7 @@ def prepare_data():
     new_labels = []
     new_test = []
 
-    for (x, y) in zip(train_img[:100], train_lab[:100]):
+    for (x, y) in zip(train_img, train_lab):
         im = transform_test(Image.fromarray(np.uint8(x)))
         im = binary(im)
         new_train.append(im)

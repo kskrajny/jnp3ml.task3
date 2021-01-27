@@ -24,13 +24,15 @@ optimizer = optim.SGD(model.parameters(), lr=0.05)
 epochs = 30
 batch = 12
 
-min_loss = np.inf
+max_accuracy = 0
+torch.save(model.state_dict(), 'trained_model.pt')
 
 for epoch in range(epochs):
 
     train_loss = 0
     valid_loss = 0
-    correct = 0
+    train_correct = 0
+    valid_correct = 0
 
     model.train()
     for batch_index, (data, target) in enumerate(train_loader):
@@ -41,7 +43,7 @@ for epoch in range(epochs):
         optimizer.zero_grad()
         train_loss += loss.item()*data.size(0)
         for (a, b) in zip (y, target):
-            correct += (torch.argmax(a) == b).float()
+            train_correct += (torch.argmax(a) == b).float()
 
     model.eval()
     for batch_index, (data, target) in enumerate(valid_loader):
@@ -49,25 +51,28 @@ for epoch in range(epochs):
         loss = criterion(y, target.long())
         valid_loss += loss.item() * data.size(0)
         for (a, b) in zip (y, target):
-            correct += (torch.argmax(a) == b).float()
+            valid_correct += (torch.argmax(a) == b).float()
 
     train_loss = train_loss / len(train_loader.sampler)
     valid_loss = valid_loss / len(valid_loader.sampler)
-    accuracy = 100 * correct / len(train_loader.sampler)
+    train_accuracy = 100 * train_correct / len(train_loader.sampler)
+    valid_accuracy = 100 * valid_correct / len(valid_loader.sampler)
 
     print(f'Current Epoch: {epoch}\
     \nTraining Loss: {round(train_loss, 6)}\
     \nValidation Loss: {round(valid_loss, 6)}\
-    \nAccuracy: {accuracy}')
+    \nTraining Accuracy: {train_accuracy}\
+    \nValidation Accuracy: {valid_accuracy}')
 
     with open('train_log.txt', 'a') as f:
         print(f'Current Epoch: {epoch}\
         \nTraining Loss: {round(train_loss, 6)}\
         \nValidation Loss: {round(valid_loss, 6)}\
-        \nAccuracy: {accuracy}', file=f)
+        \nTraining Accuracy: {train_accuracy}\
+        \nValidation Accuracy: {valid_accuracy}', file=f)
 
-    if min_loss > valid_loss:
-        min_loss = valid_loss
+    if max_accuracy < valid_accuracy:
+        max_accuracy = valid_accuracy
         print("New Leader !!!\n")
         with open('train_log.txt', 'a') as f:
             print("New Leader !!!\n", file=f)

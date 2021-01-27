@@ -1,9 +1,11 @@
 /notebooks/.ipynb_checkpoints
 /venv
+/save
 Dockerfile
 trained_model.pt
 README.md
 .git
 .gitignore
 docker.start
-training.log
+train.log
+kaggle.out.csv
