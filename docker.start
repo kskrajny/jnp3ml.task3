@@ -22,4 +22,4 @@
     docker cp $(docker ps -q --filter ancestor=170899/ml3):/src/trained_model.pt save/trained_model.pt
 
 # remove container
-    docker rm -f $(docker ps -q --filter ancestor=170899/ml3)
+    docker rm -f $(docker ps -a -q --filter ancestor=170899/ml3)

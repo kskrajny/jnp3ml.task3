@@ -38,12 +38,10 @@ def prepare_data():
         im = binary(im)
         new_train.append(im)
         new_labels.append(y)
-        '''
-        for j in range(4):
+        for j in range(2):
             im = transform_train(Image.fromarray(np.uint8(x)))
             new_train.append(im)
             new_labels.append(y)
-        '''
 
     for x in t10k:
         im = transform_test(Image.fromarray(np.uint8(x)))
